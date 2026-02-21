@@ -51,8 +51,10 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           envFrom:
+            {{- range .Values.secrets }}
             - secretRef:
-                name: {{ (index .Values.secrets 0).name }}
+                name: {{ .name }}
+            {{- end }}
 
       {{- with .Values.nodeSelector }}
       nodeSelector:
