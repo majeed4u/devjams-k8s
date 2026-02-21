@@ -25,6 +25,14 @@ spec:
       serviceAccountName: {{ include "devjams-deployment.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      {{- /* Secret name logic */}}
+      {{- if kindIs "slice" .Values.secrets }}
+      {{- $secretName := (index .Values.secrets 0).name }}
+      {{- else }}
+      {{- $secretName := printf "%s-secrets" (include "devjams-deployment.fullname" .) }}
+      {{- end }}
+
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -35,36 +43,42 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+
           livenessProbe:
             httpGet:
               path: /
               port: {{ .Values.service.port }}
             initialDelaySeconds: 30
             periodSeconds: 10
+
           readinessProbe:
             httpGet:
               path: /
               port: {{ .Values.service.port }}
             initialDelaySeconds: 5
             periodSeconds: 10
+
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-{{- $secretName := if kindIs "slice" .Values.secrets }}{{ (index .Values.secrets 0).name }}{{ else }}{{ include "devjams-deployment.fullname" . }}-secrets{{ end }}
+
           envFrom:
-{{- if and .Values.config (not (kindIs "slice" .Values.secrets)) }}
+            {{- if and (.Values.config) (not (kindIs "slice" .Values.secrets)) }}
             - configMapRef:
                 name: {{ include "devjams-deployment.fullname" . }}-config
-{{- end }}
+            {{- end }}
             - secretRef:
                 name: {{ $secretName }}
+
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
