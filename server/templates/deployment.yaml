@@ -37,13 +37,13 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /healthz/live
               port: {{ .Values.service.port }}
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             httpGet:
-              path: /
+              path: /healthz/ready
               port: {{ .Values.service.port }}
             initialDelaySeconds: 5
             periodSeconds: 10
