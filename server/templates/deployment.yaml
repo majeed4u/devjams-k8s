@@ -51,12 +51,8 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           envFrom:
-{{- if and (.Values.config) (not (kindIs "slice" .Values.secrets)) }}
-            - configMapRef:
-                name: {{ include "devjams-deployment.fullname" . }}-config
-{{- end }}
             - secretRef:
-                name: {{ if kindIs "slice" .Values.secrets }}{{ (index .Values.secrets 0).name }}{{ else }}{{ include "devjams-deployment.fullname" . }}-secrets{{ end }}
+                name: {{ (index .Values.secrets 0).name }}
 
       {{- with .Values.nodeSelector }}
       nodeSelector:

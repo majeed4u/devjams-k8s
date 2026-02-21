@@ -74,13 +74,10 @@ tolerations: []
 
 affinity: {}
 
-config:
-  betterAuthSecret: "OHgRyAzg67dRcuEf4lHuRhiV8AzgvQ7C"
-  betterAuthUrl: "https://server-prod.internalk.majedtec.com"
-  corsOrigin: "http://web-prod.internalk.majedtec.com"
-
+# External Secrets (required)
+# Specify the name of the ExternalSecret or Secret resource
 secrets:
-  databaseUrl: ""
+  - name: "my-external-secret"
 
 certificate:
   enabled: true
