@@ -49,11 +49,14 @@ spec:
             periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+{{- $secretName := if kindIs "slice" .Values.secrets }}{{ (index .Values.secrets 0).name }}{{ else }}{{ include "devjams-deployment.fullname" . }}-secrets{{ end }}
           envFrom:
+{{- if and .Values.config (not (kindIs "slice" .Values.secrets)) }}
             - configMapRef:
                 name: {{ include "devjams-deployment.fullname" . }}-config
+{{- end }}
             - secretRef:
-                name: {{ include "devjams-deployment.fullname" . }}-secrets
+                name: {{ $secretName }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
