@@ -1,3 +1,4 @@
+{{- if .Values.config }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -5,6 +6,5 @@ metadata:
   labels:
     {{- include "devjams-deployment.labels" . | nindent 4 }}
 data:
-  BETTER_AUTH_SECRET: {{ .Values.config.betterAuthSecret | quote }}
-  BETTER_AUTH_URL: {{ .Values.config.betterAuthUrl | quote }}
-  CORS_ORIGIN: {{ .Values.config.corsOrigin | quote }}
+  {{- toYaml .Values.config | nindent 2 }}
+{{- end }}
