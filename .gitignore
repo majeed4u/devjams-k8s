@@ -1,3 +1,5 @@
 gitea-registry-secret.yaml
 server/prod/*
 server/stg/*
+stg.json
+prod.json
